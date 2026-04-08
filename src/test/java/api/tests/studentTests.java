@@ -28,12 +28,16 @@ public class studentTests {
         System.out.println("MOBILE=" + System.getenv("MOBILE"));
         System.out.println("OTP=" + System.getenv("OTP"));
         System.out.println("ISD=" + System.getenv("ISD"));
+        System.out.println("stg_MOBILE=" + System.getenv("stg_MOBILE"));
+        System.out.println("stg_OTP=" + System.getenv("stg_OTP"));
+        System.out.println("stg_ISD=" + System.getenv("stg_ISD"));
 
         loginPayload = new login();
 
-        loginPayload.setMobile(EnvUtils.get("stg_MOBILE"));
-        loginPayload.setIsd(EnvUtils.get("stg_ISD"));
-        loginPayload.setOtp(EnvUtils.get("stg_OTP"));;
+        // Support both local env names (MOBILE/OTP/ISD) and prefixed CI/stage names (stg_*)
+        loginPayload.setMobile(EnvUtils.getFirstSet("MOBILE", "stg_MOBILE"));
+        loginPayload.setIsd(EnvUtils.getFirstSet("ISD", "stg_ISD"));
+        loginPayload.setOtp(EnvUtils.getFirstSet("OTP", "stg_OTP"));
 
 
 //        loginPayload.setMobile("8295802444");
@@ -41,9 +45,14 @@ public class studentTests {
 //        loginPayload.setOtp("2444");
 
         Response res = studentEndpoints.login(loginPayload);
+        res.then().log().all();
+        Assert.assertEquals(res.getStatusCode(), 200, "Login failed, cannot extract token");
 
         student_token = res.jsonPath().getString("data.token");
         student_id = res.jsonPath().getString("data.user.id");
+        Assert.assertNotNull(student_token, "Login response missing data.token");
+        Assert.assertFalse(student_token.trim().isEmpty(), "Login response token is blank");
+        Assert.assertNotNull(student_id, "Login response missing data.user.id");
 
         Response response =studentEndpoints.getPastSessions(student_token, student_id);
 

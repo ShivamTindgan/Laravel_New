@@ -2,6 +2,7 @@ package api.tests;
 
 import api.endpoints.teacherEndpoints;
 import api.payload.login;
+import api.utilities.EnvUtils;
 import io.restassured.response.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,22 +30,32 @@ public class teacherTests {
         System.out.println("MOBILE=" + System.getenv("MOBILE"));
         System.out.println("OTP=" + System.getenv("OTP"));
         System.out.println("ISD=" + System.getenv("ISD"));
+        System.out.println("stg_MOBILE=" + System.getenv("stg_MOBILE"));
+        System.out.println("stg_OTP=" + System.getenv("stg_OTP"));
+        System.out.println("stg_ISD=" + System.getenv("stg_ISD"));
 
 //        loginPayload.setMobile(System.getenv("MOBILE"));
 //        loginPayload.setIsd(System.getenv("ISD"));
 //        loginPayload.setOtp(System.getenv("OTP"));
 
-        loginPayload.setMobile(System.getenv("MOBILE"));
-        loginPayload.setIsd(System.getenv("OTP"));
-        loginPayload.setOtp(System.getenv("ISD"));
+        loginPayload.setMobile(EnvUtils.getFirstSet("MOBILE", "stg_MOBILE"));
+        loginPayload.setIsd(EnvUtils.getFirstSet("ISD", "stg_ISD"));
+        loginPayload.setOtp(EnvUtils.getFirstSet("OTP", "stg_OTP"));
 
         Response res = teacherEndpoints.login(loginPayload);
+        res.then().log().all();
+        Assert.assertEquals(res.getStatusCode(), 200, "Login failed, cannot extract token");
 
         teacher_token = res.jsonPath().getString("data.token");
         teacher_id = res.jsonPath().getString("data.user.id");
+        Assert.assertNotNull(teacher_token, "Login response missing data.token");
+        Assert.assertFalse(teacher_token.trim().isEmpty(), "Login response token is blank");
+        Assert.assertNotNull(teacher_id, "Login response missing data.user.id");
 
         //get summary
         Response response2 =teacherEndpoints.getSessionSummary(teacher_token, teacher_id);
+        response2.then().log().all();
+        Assert.assertEquals(response2.getStatusCode(), 200, "Session summary call failed in setup()");
         sessionId= response2.jsonPath().getInt("data[0].id");
         summaryId =response2.jsonPath().getInt("data[0].summary_id");
 
