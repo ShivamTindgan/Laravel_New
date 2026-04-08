@@ -1,5 +1,5 @@
 package api.payload;
-//{"type":"login","mobile":"8295802444","isd":"+91"}
+
 public class otp {
 
     String mobile;

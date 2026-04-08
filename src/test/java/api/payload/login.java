@@ -1,5 +1,5 @@
 package api.payload;
-//{"isd":"+91","mobile":"8295802444","otp":"2444"}
+
 public class login {
     String isd;
     String mobile;

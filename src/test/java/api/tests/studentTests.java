@@ -26,9 +26,9 @@ public class studentTests {
 
         loginPayload = new login();
 
-        loginPayload.setMobile("8295802444");
-        loginPayload.setIsd("+91");
-        loginPayload.setOtp("2444");
+        loginPayload.setMobile(System.getenv("MOBILE"));
+        loginPayload.setIsd(System.getenv("ISD"));
+        loginPayload.setOtp(System.getenv("OTP"));
 
         Response res = studentEndpoints.login(loginPayload);
 
