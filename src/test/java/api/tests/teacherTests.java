@@ -26,13 +26,17 @@ public class teacherTests {
 
         loginPayload = new login();
 
+        System.out.println("MOBILE=" + System.getenv("MOBILE"));
+        System.out.println("OTP=" + System.getenv("OTP"));
+        System.out.println("ISD=" + System.getenv("ISD"));
+
 //        loginPayload.setMobile(System.getenv("MOBILE"));
 //        loginPayload.setIsd(System.getenv("ISD"));
 //        loginPayload.setOtp(System.getenv("OTP"));
 
-        loginPayload.setMobile("8295802444");
-        loginPayload.setIsd("+91");
-        loginPayload.setOtp("2444");
+        loginPayload.setMobile(System.getenv("MOBILE"));
+        loginPayload.setIsd(System.getenv("OTP"));
+        loginPayload.setOtp(System.getenv("ISD"));
 
         Response res = teacherEndpoints.login(loginPayload);
 

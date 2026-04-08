@@ -4,6 +4,7 @@ import api.endpoints.Routes;
 import api.endpoints.studentEndpoints;
 import api.endpoints.teacherEndpoints;
 import api.payload.login;
+import api.utilities.EnvUtils;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -24,15 +25,20 @@ public class studentTests {
     @BeforeClass
     public void setup() {
 
+        System.out.println("MOBILE=" + System.getenv("MOBILE"));
+        System.out.println("OTP=" + System.getenv("OTP"));
+        System.out.println("ISD=" + System.getenv("ISD"));
+
         loginPayload = new login();
 
-//        loginPayload.setMobile(System.getenv("MOBILE"));
-//        loginPayload.setIsd(System.getenv("ISD"));
-//        loginPayload.setOtp(System.getenv("OTP"));
+        loginPayload.setMobile(EnvUtils.get("stg_MOBILE"));
+        loginPayload.setIsd(EnvUtils.get("stg_ISD"));
+        loginPayload.setOtp(EnvUtils.get("stg_OTP"));;
 
-        loginPayload.setMobile("8295802444");
-        loginPayload.setIsd("+91");
-        loginPayload.setOtp("2444");
+
+//        loginPayload.setMobile("8295802444");
+//        loginPayload.setIsd("+91");
+//        loginPayload.setOtp("2444");
 
         Response res = studentEndpoints.login(loginPayload);
 
